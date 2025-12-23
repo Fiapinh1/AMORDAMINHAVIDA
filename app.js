@@ -12,25 +12,26 @@ const CONFIG = {
   viagemMarcante: "Caldas Novas",
 
   // Fase 4 (SALA) - item e código físico
-  salaItem: "flores",
-  codigoFlores: "FLOR-22", // escreva num papelzinho preso nas flores
+  salaItem: "sala do mozao",
+  codigoFlores: "flor", // escreva num papelzinho preso nas flores
 
   // Fase 5
   camisetaOdeia: "camiseta vermelha da maca", // a validação ignora acento
   // (se quiser ser mais curto: "camiseta vermelha")
 
   // Fase 6 (COZINHA) - chocolate + código físico
-  codigoChocolate: "CHOCO-07", // escreva no bilhetinho junto do chocolate
+  codigoChocolate: "chocolate", // escreva no bilhetinho junto do chocolate
 
   // Fase 7
-  pedidoCasamento: "Paris",
+  pedidoCasamento: "paris",
 
   // Fase 8 (QUARTO DE HÓSPEDE) - cartinha + código físico
-  codigoCartinha: "CARTA-LOVE",
+  codigoCartinha: "cartinha de amor",
 
   // Fase 9 (VÍDEO + QUARTO FINAL)
   videoSrc: "video.mp4", // coloque o arquivo no repo. Se for youtube, eu adapto.
-  codigoFinal: "ABRE-QUARTO", // opcional: pode estar num bilhete na porta
+  musicSrc: "musica.m4a", // música que toca depois do código final
+  codigoFinal: "Eu te amo", // opcional: pode estar num bilhete na porta
 };
 // ================================
 
@@ -106,7 +107,7 @@ const LEVELS = [
         <div class="row">
           <input id="ans1" class="input" placeholder="Ex: 12/06" autocomplete="off" />
         </div>
-        <div class="small">Dica: pode digitar com /, - ou só números.</div>
+        <div class="small">Dica: Um dia romantico com um vergoso haha.</div>
       `;
       btnBack.disabled = false;
       $("#ans1").focus();
@@ -164,32 +165,32 @@ const LEVELS = [
 
   // 4) Sala: flores + código
   {
-    title: "Fase 4 — Missão na Sala 🛋️",
-    desc: "Na sala tem algo te esperando. O que você vai encontrar?",
-    hint: "É algo bonito e cheirosinho 🌸",
+    title: "Fase 4 — Missão na Garagem 🏠",
+    desc: "Na Garagem tem algo te esperando. me diga oque você encontrou?",
+    hint: " Pode começar procurar por um 🔐, depois você vai ter que achar hahah ",
     render(){
       contentEl.innerHTML = `
         <div class="row">
           <input id="ans4" class="input" placeholder="Responda (uma palavra)..." autocomplete="off" />
         </div>
         <div class="small">
-          Quando acertar, eu vou te mandar ir até a sala procurar de verdade 😄
+          Quando acertar, eu vou te mandar ir até a sala para pegar sua recompensa 😄
         </div>
       `;
       $("#ans4").focus();
     },
     validate(){
       const v = $("#ans4").value;
-      if (!matchAny(v, [CONFIG.salaItem, "flor", "flores"])) return err("Não… tenta de novo 👀");
+      if (!matchAny(v, [CONFIG.salaItem])) return err("Não… tenta de novo 👀");
 
       // acertou: pede ação real com código
       contentEl.innerHTML = `
         <div class="choice selected" style="flex:1">
           <b>Boa! Agora vai até a SALA.</b><br/><br/>
-          Encontre as <b>${CONFIG.salaItem}</b> e procure um papelzinho com um código.
+          Na <b>${CONFIG.salaItem}</b> pegue seu premio e procure um papelzinho com um código.
         </div>
         <div class="row" style="margin-top:12px">
-          <input id="codeFlores" class="input" placeholder="Digite o código das flores..." autocomplete="off" />
+          <input id="codeFlores" class="input" placeholder="Digite o código..." autocomplete="off" />
         </div>
         <div class="small">Sem o código não vale 😄</div>
       `;
@@ -199,7 +200,7 @@ const LEVELS = [
       LEVELS[state.level].validate = () => {
         const code = $("#codeFlores")?.value || "";
         if (matchAny(code, [CONFIG.codigoFlores])) return ok("Perfeito! Próxima fase ✅");
-        return err("Código errado… confere no papelzinho das flores 🙂");
+        return err("Código errado… confere no papelzinho 🙂");
       };
 
       ok("Vai lá na sala! 🌸");
@@ -211,7 +212,7 @@ const LEVELS = [
   {
     title: "Fase 5 — A camiseta 😅",
     desc: "Qual é a camiseta que você mais odeia quando eu uso?",
-    hint: "Vermelha… e tem uma referência bem específica 🍎",
+    hint: "Tem uma referência bem específica 🔴🍎",
     render(){
       contentEl.innerHTML = `
         <div class="row">
@@ -222,28 +223,35 @@ const LEVELS = [
       $("#ans5").focus();
     },
     validate(){
-      const v = norm($("#ans5").value);
-      const ok1 = v.includes("camiseta") && v.includes("vermelha") && (v.includes("maca") || v.includes("maça") || v.includes("apple"));
-      if (ok1) return ok("HAHA sim… essa mesmo 😅✅");
-      return err("Não foi… pensa na camiseta que te dá raiva só de ver 😂");
+            const v = norm($("#ans5").value);
+      const camisetaOptions = [
+        "camiseta vermelha da maca",
+        "camiseta da maca",
+        "vermelha da maca"
+      ];
+      const okPreset = matchAny(v, camisetaOptions);
+      const ok1 = okPreset || (v.includes("camiseta") && v.includes("vermelha") && (v.includes("maca") || v.includes("ma?a") || v.includes("apple")));
+      if (ok1) return ok("HAHA sim? essa mesmo ???");
+      return err("N?o foi? pensa na camiseta que te d? raiva s? de lembrar ??");
+
     }
   },
 
   // 6) Cozinha: chocolate + código
   {
-    title: "Fase 6 — Missão na Cozinha 🍫",
-    desc: "Agora você vai para a COZINHA e vai procurar o chocolate escondido.",
+    title: "Fase 6 — Missão na Cozinha ",
+    desc: "Agora você vai para a COZINHA e vai procurar o que está escondido.",
     hint: "Olha onde eu poderia esconder algo pequeno e gostoso 👀",
     render(){
       contentEl.innerHTML = `
         <div class="choice selected" style="flex:1">
           <b>Vai até a COZINHA.</b><br/><br/>
-          Quando achar o chocolate, ele vai ter um papelzinho com um <b>código</b>.
+          Quando achar ele vai ter um papelzinho com um <b>código</b>.
         </div>
         <div class="row" style="margin-top:12px">
-          <input id="codeChoco" class="input" placeholder="Digite o código do chocolate..." autocomplete="off" />
+          <input id="codeChoco" class="input" placeholder="Digite o código..." autocomplete="off" />
         </div>
-        <div class="small">Dica: o código começa com <b>CHOCO</b>.</div>
+        <div class="small">Dica: o código começa com <b>Se vire e acha kkk..</b>.</div>
       `;
       $("#codeChoco").focus();
     },
@@ -257,7 +265,7 @@ const LEVELS = [
   // 7) Paris torre eiffel
   {
     title: "Fase 7 — Sonho de pedido 💍",
-    desc: "Onde a Tata quer que eu peça ela em casamento?",
+    desc: "Onde a Tatazinha quer que eu peça você em casamento?",
     hint: "Um lugar clássico, romântico, e bem famoso ✨",
     render(){
       contentEl.innerHTML = `
@@ -269,26 +277,33 @@ const LEVELS = [
       $("#ans7").focus();
     },
     validate(){
-      const v = norm($("#ans7").value);
-      const ok2 = v.includes("paris") && (v.includes("eiffel") || v.includes("torre"));
-      if (ok2) return ok("Isso! 🥹💛");
-      return err("Hmm… pensa em um lugar bem ‘filme’ 😄");
+            const v = norm($("#ans7").value);
+      const pedidoOptions = [
+        "paris",
+        "torre eiffel",
+        "paris torre eiffel",
+        "paris torre eifell",
+        "torre eifell"
+      ];
+      if (matchAny(v, pedidoOptions)) return ok("Isso! ???");
+      return err("Hmm? pensa em um lugar bem ?filme? ??");
+
     }
   },
 
   // 8) Quarto de hóspede: cartinha + código
   {
-    title: "Fase 8 — Quarto de hóspede 💌",
-    desc: "Vai até o QUARTO DE HÓSPEDE. Lá tem um presente: uma cartinha de amor.",
-    hint: "Olha em lugares ‘óbvios de esconder bilhete’ 😄",
+    title: "Fase 8 — Quarto do Notebook 💻 ",
+    desc: "Vai até o QUARTO. Lá tem uma surpresa para você.",
+    hint: "Olha em lugares ‘óbvios de esconder um(a) .......’ 😄",
     render(){
       contentEl.innerHTML = `
         <div class="choice selected" style="flex:1">
-          <b>Missão:</b> encontre a cartinha 💌<br/><br/>
-          Ela tem um papelzinho com um código pra você digitar aqui.
+          <b>Missão:</b> encontre a ...<br/><br/>
+          La tem um papelzinho com um código pra você digitar aqui.
         </div>
         <div class="row" style="margin-top:12px">
-          <input id="codeCarta" class="input" placeholder="Digite o código da cartinha..." autocomplete="off" />
+          <input id="codeCarta" class="input" placeholder="Digite o código..." autocomplete="off" />
         </div>
       `;
       $("#codeCarta").focus();
@@ -319,44 +334,53 @@ const LEVELS = [
         <div id="unlockArea" style="margin-top:12px; display:none;">
           <div class="choice selected" style="flex:1">
             <b>Agora sim!</b> Você pode ir até o <b>QUARTO</b> 🎁<br/><br/>
-            (Opcional) Se tiver um código final num bilhete na porta, digite aqui:
+            Digite o codigo para abrir a porta...
           </div>
           <div class="row" style="margin-top:12px">
-            <input id="finalCode" class="input" placeholder="Digite o código final (opcional)..." autocomplete="off" />
+            <input id="finalCode" class="input" placeholder="Digite o código final..." autocomplete="off" />
           </div>
-          <div class="small">Se você não quiser usar código final, pode deixar em branco.</div>
+          <div class="small">❤️</div>
         </div>
       `;
 
       btnNext.textContent = "Liberar";
       btnBack.disabled = true;
+      btnNext.style.visibility = "hidden";
+      btnNext.disabled = true;
 
       const vid = $("#vid");
       const unlock = $("#unlockArea");
+      const showUnlock = () => {
+        unlock.style.display = "block";
+        btnNext.style.visibility = "visible";
+        btnNext.disabled = false;
+        launchConfetti();
+        ok("V?deo finalizado! Agora pode liberar ?");
+      };
       if (vid) {
-        vid.addEventListener("ended", () => {
-          unlock.style.display = "block";
-          launchConfetti();
-          ok("Vídeo finalizado! Agora pode liberar ✅");
-        });
+        vid.addEventListener("ended", showUnlock);
+        if (vid.ended) showUnlock();
       }
+
     },
     validate(){
       const unlock = $("#unlockArea");
       if (!unlock || unlock.style.display === "none") {
-        return err("Assista o vídeo até o fim pra liberar 🙂");
+        return err("Assista o v?deo at? o fim pra liberar ?");
       }
       const code = ($("#finalCode")?.value || "").trim();
       if (!code) {
-        ok("Liberado! Vai pro quarto agora 😍🎁");
+        ok("Liberado! Vai pro quarto agora ????");
         return true;
       }
       if (matchAny(code, [CONFIG.codigoFinal])) {
-        ok("Perfeito! Agora pode abrir o quarto 🎁✅");
+        playMusicOnce();
+        ok("Perfeito! Agora pode abrir o quarto ???");
         return true;
       }
-      return err("Código final errado… confere no bilhete/porta 🙂");
+      return err("C?digo final errado? confere no bilhete/porta ??");
     }
+
   }
 ];
 
@@ -377,6 +401,9 @@ function renderLevel(){
 
   progressText.textContent = `Fase ${i+1} de ${total}`;
   barFill.style.width = `${((i+1) / total) * 100}%`;
+
+  btnNext.style.visibility = "visible";
+  btnNext.disabled = false;
 
   btnBack.disabled = i === 0;
   btnNext.textContent = (i === total - 1) ? "Liberar" : "Continuar";
@@ -449,6 +476,17 @@ function loadState(){
   }
 }
 
+// ---------- AUDIO ----------
+let musicAudio = null;
+function playMusicOnce(){
+  if (!CONFIG.musicSrc) return;
+  if (!musicAudio) musicAudio = new Audio(CONFIG.musicSrc);
+  try {
+    musicAudio.currentTime = 0;
+    musicAudio.play();
+  } catch { /* ignore autoplay issues */ }
+}
+
 // ---------- CONFETTI ----------
 const canvas = $("#confetti");
 const ctx = canvas.getContext("2d");
@@ -501,4 +539,3 @@ function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 
 // start
 renderLevel();
-
