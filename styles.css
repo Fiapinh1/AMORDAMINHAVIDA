@@ -73,6 +73,7 @@ button:active{transform: translateY(1px)}
 .input{
   width:min(520px, 100%); border-radius:12px; border:1px solid var(--line);
   background:#fff; color:var(--txt); padding:12px 12px; outline:none;
+  font-size:16px; /* evita zoom em mobile ao focar */
 }
 .input:focus{border-color:var(--accent)}
 .input::placeholder{color:#b06a85}
